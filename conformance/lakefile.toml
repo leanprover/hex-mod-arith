@@ -1,0 +1,15 @@
+name = "hex-mod-arith-conformance"
+defaultTargets = ["HexModArithConformance"]
+
+leanOptions = [
+  { name = "doc.verso", value = true },
+  { name = "doc.verso.suggestions", value = false },
+]
+
+[[require]]
+name = "HexModArith"
+path = ".."
+
+[[lean_lib]]
+name = "HexModArithConformance"
+globs = ["HexModArith.Conformance", "HexModArith.FastCheck"]

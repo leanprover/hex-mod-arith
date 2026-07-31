@@ -1,0 +1,16 @@
+{"version": "1.2.0",
+ "packagesDir": ".lake/packages",
+ "packages":
+ [{"url": "https://github.com/leanprover/hex-arith.git",
+   "type": "git",
+   "subDir": null,
+   "scope": "",
+   "rev": "9d1eeb75bdf9d9f26a97c5ab7d5aec371876c587",
+   "name": "HexArith",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "9d1eeb75bdf9d9f26a97c5ab7d5aec371876c587",
+   "inherited": false,
+   "configFile": "lakefile.lean"}],
+ "name": "«hex-mod-arith»",
+ "lakeDir": ".lake",
+ "fixedToolchain": false}

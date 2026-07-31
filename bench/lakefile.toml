@@ -1,0 +1,20 @@
+name = "hex-mod-arith-bench"
+defaultTargets = ["hexmodarith_bench"]
+
+leanOptions = [
+  { name = "doc.verso", value = true },
+  { name = "doc.verso.suggestions", value = false },
+]
+
+[[require]]
+name = "HexModArith"
+path = ".."
+
+[[require]]
+name = "lean-bench"
+git = "https://github.com/kim-em/lean-bench.git"
+rev = "fa30c2763cf523f3ac8e46dc3a1dad0845a40098"
+
+[[lean_exe]]
+name = "hexmodarith_bench"
+root = "HexModArith.Bench"
