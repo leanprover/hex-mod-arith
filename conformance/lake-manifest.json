@@ -1,23 +1,30 @@
-{"version": "1.2.0",
- "packagesDir": ".lake/packages",
- "packages":
- [{"type": "path",
-   "scope": "",
-   "name": "HexModArith",
-   "manifestFile": "lake-manifest.json",
-   "inherited": false,
-   "dir": "..",
-   "configFile": "lakefile.lean"},
-  {"url": "https://github.com/leanprover/hex-arith.git",
-   "type": "git",
-   "subDir": null,
-   "scope": "",
-   "rev": "9d1eeb75bdf9d9f26a97c5ab7d5aec371876c587",
-   "name": "HexArith",
-   "manifestFile": "lake-manifest.json",
-   "inputRev": "9d1eeb75bdf9d9f26a97c5ab7d5aec371876c587",
-   "inherited": true,
-   "configFile": "lakefile.lean"}],
- "name": "«hex-mod-arith-conformance»",
- "lakeDir": ".lake",
- "fixedToolchain": false}
+{
+  "version": "1.2.0",
+  "packagesDir": ".lake/packages",
+  "packages": [
+    {
+      "type": "path",
+      "scope": "",
+      "name": "HexModArith",
+      "manifestFile": "lake-manifest.json",
+      "inherited": false,
+      "dir": "..",
+      "configFile": "lakefile.lean"
+    },
+    {
+      "url": "https://github.com/leanprover/hex-arith.git",
+      "type": "git",
+      "subDir": null,
+      "scope": "",
+      "rev": "e96af967c9dbdf95937d845e9448e05c04e9e975",
+      "name": "HexArith",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "e96af967c9dbdf95937d845e9448e05c04e9e975",
+      "inherited": true,
+      "configFile": "lakefile.lean"
+    }
+  ],
+  "name": "\u00abhex-mod-arith-conformance\u00bb",
+  "lakeDir": ".lake",
+  "fixedToolchain": false
+}
