@@ -16,10 +16,10 @@
       "type": "git",
       "subDir": null,
       "scope": "",
-      "rev": "e96af967c9dbdf95937d845e9448e05c04e9e975",
+      "rev": "1b536f900565c757ebdc4cb7d5eedcbeaf58af75",
       "name": "HexArith",
       "manifestFile": "lake-manifest.json",
-      "inputRev": "e96af967c9dbdf95937d845e9448e05c04e9e975",
+      "inputRev": "1b536f900565c757ebdc4cb7d5eedcbeaf58af75",
       "inherited": true,
       "configFile": "lakefile.lean"
     }
