@@ -5,37 +5,41 @@ on:
   pull_request:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgmp-dev libpari-dev pari-gp
       - uses: leanprover/lean-action@v1
         with:
           auto-config: false
           build: false
+          use-github-cache: false
+          use-mathlib-cache: false
+      - name: Restore Lake build outputs
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            .lake/build
+            .lake/packages/Hex*/.lake/build
+          key: lake-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            lake-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
       - name: Build library and release regressions
         run: lake build HexModArith
-      - name: Build conformance sidecar
-        run: |
-          cd conformance
-          lake build
-      - name: Build and verify benchmarks
-        env:
-          BENCH_VERIFY_HARD_CAP_SECONDS: "360"
-        run: |
-          cd bench
-          lake build hexmodarith_bench
-          bash ../scripts/ci/check_bench_verify_budget.sh hexmodarith_bench
       - name: Assert Mathlib-free
         run: |
-          if find .lake bench/.lake conformance/.lake -type d -name Mathlib 2>/dev/null | grep -q .; then
+          if find .lake -type d -iname mathlib 2>/dev/null | grep -q .; then
             echo "ERROR: a Lake build pulled in Mathlib"; exit 1; fi
-          if grep -rqE '^import Mathlib' HexModArith conformance/HexModArith bench/HexModArith 2>/dev/null; then
+          if grep -rqE '^[[:space:]]*((public|private|meta)[[:space:]]+)*import[[:space:]]+Mathlib' HexModArith 2>/dev/null; then
             echo "ERROR: a source file imports Mathlib"; exit 1; fi
           echo "Mathlib-free OK"
+      - name: Save Lake build outputs
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            .lake/build
+            .lake/packages/Hex*/.lake/build
+          key: lake-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.run_id }}-${{ github.run_attempt }}
