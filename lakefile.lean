@@ -6,13 +6,21 @@ package «hex-mod-arith» where
   leanOptions := #[⟨`doc.verso, true⟩, ⟨`doc.verso.suggestions, false⟩]
 
 require HexArith from git
-  "https://github.com/leanprover/hex-arith.git" @ "ea246536c442464a68210ecce973eb7708968f59"
+  "https://github.com/leanprover/hex-arith.git" @ "d1bb1fc4170e223bbf12ae13add81ac4b18f4d39"
 
 private def zmod64MulOTarget (pkg : Package) : FetchM (Job FilePath) := do
   let oFile := pkg.dir / defaultBuildDir / "HexModArith" / "ffi" / "zmod64_mul.o"
   let srcTarget ← inputTextFile <| pkg.dir / "HexModArith" / "ffi" / "zmod64_mul.c"
   buildFileAfterDep oFile srcTarget fun srcFile => do
-    compileO oFile srcFile #["-I", (← getLeanIncludeDir).toString, "-fPIC", "-O3"]
+    let flags := #["-I", (← getLeanIncludeDir).toString, "-fPIC", "-O3"]
+    -- Mathlib's sandbox permits writes in the build directory, but not /tmp.
+    -- Set TMPDIR for this compiler process only, including compiler wrappers.
+    createParentDirs oFile
+    proc {
+      cmd := "cc"
+      args := #["-c", "-o", oFile.toString, srcFile.toString] ++ flags
+      env := #[("TMPDIR", some (← IO.FS.realPath (oFile.parent.getD ".")).toString)]
+    }
 
 extern_lib hexmodarithffi (pkg) := do
   let name := nameToStaticLib "hexmodarithffi"
