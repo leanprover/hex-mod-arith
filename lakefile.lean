@@ -6,7 +6,7 @@ package «hex-mod-arith» where
   leanOptions := #[⟨`doc.verso, true⟩, ⟨`doc.verso.suggestions, false⟩]
 
 require HexArith from git
-  "https://github.com/leanprover/hex-arith.git" @ "v0.4.0"
+  "https://github.com/leanprover/hex-arith.git" @ "v0.5.0"
 
 private def zmod64MulOTarget (pkg : Package) : FetchM (Job FilePath) := do
   let oFile := pkg.dir / defaultBuildDir / "HexModArith" / "ffi" / "zmod64_mul.o"
