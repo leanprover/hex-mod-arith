@@ -6,7 +6,7 @@ package «hex-mod-arith» where
   leanOptions := #[⟨`doc.verso, true⟩, ⟨`doc.verso.suggestions, false⟩]
 
 require HexArith from git
-  "https://github.com/leanprover/hex-arith.git" @ "v0.5.0"
+  "https://github.com/leanprover/hex-arith.git" @ "v0.6.0"
 
 private def zmod64MulOTarget (pkg : Package) : FetchM (Job FilePath) := do
   let oFile := pkg.dir / defaultBuildDir / "HexModArith" / "ffi" / "zmod64_mul.o"
@@ -22,7 +22,7 @@ private def zmod64MulOTarget (pkg : Package) : FetchM (Job FilePath) := do
       env := #[("TMPDIR", some (← IO.FS.realPath (oFile.parent.getD ".")).toString)]
     }
 
-extern_lib hexmodarithffi (pkg) := do
+target hexmodarithffi pkg : FilePath := do
   let name := nameToStaticLib "hexmodarithffi"
   let oTarget ← zmod64MulOTarget pkg
   buildStaticLib (pkg.staticLibDir / name) #[oTarget]
@@ -31,3 +31,4 @@ extern_lib hexmodarithffi (pkg) := do
 lean_lib HexModArith where
   precompileModules := true
   moreLinkArgs := #["-lgmp"]
+  moreLinkObjs := #[hexmodarithffi]
