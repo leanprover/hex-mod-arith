@@ -1,18 +1,20 @@
 import Lake
-
 open System Lake DSL
 
 package «hex-mod-arith» where
   leanOptions := #[⟨`doc.verso, true⟩, ⟨`doc.verso.suggestions, false⟩]
 
 require HexArith from git
-  "https://github.com/leanprover/hex-arith.git" @ "v0.6.0"
+  "https://github.com/leanprover/hex-arith.git" @ "v0.7.0"
 
 private def zmod64MulOTarget (pkg : Package) : FetchM (Job FilePath) := do
   let oFile := pkg.dir / defaultBuildDir / "HexModArith" / "ffi" / "zmod64_mul.o"
   let srcTarget ← inputTextFile <| pkg.dir / "HexModArith" / "ffi" / "zmod64_mul.c"
   buildFileAfterDep oFile srcTarget fun srcFile => do
-    let flags := #["-I", (← getLeanIncludeDir).toString, "-fPIC", "-O3"]
+    -- `LEAN_EXPORTING` makes `LEAN_EXPORT` a dllexport on Windows, as Lake
+    -- does for Lean's own C; a carrier DLL otherwise hides these symbols.
+    let flags := #["-I", (← getLeanIncludeDir).toString, "-fPIC", "-O3",
+      "-DLEAN_EXPORTING"]
     -- Mathlib's sandbox permits writes in the build directory, but not /tmp.
     -- Set TMPDIR for this compiler process only, including compiler wrappers.
     createParentDirs oFile
@@ -22,13 +24,15 @@ private def zmod64MulOTarget (pkg : Package) : FetchM (Job FilePath) := do
       env := #[("TMPDIR", some (← IO.FS.realPath (oFile.parent.getD ".")).toString)]
     }
 
-target hexmodarithffi pkg : FilePath := do
-  let name := nameToStaticLib "hexmodarithffi"
-  let oTarget ← zmod64MulOTarget pkg
-  buildStaticLib (pkg.staticLibDir / name) #[oTarget]
+target hexmodarithO pkg : FilePath := zmod64MulOTarget pkg
 
 @[default_target]
 lean_lib HexModArith where
   precompileModules := true
-  moreLinkArgs := #["-lgmp"]
-  moreLinkObjs := #[hexmodarithffi]
+
+lean_lib HexModArithNative where
+  roots := #[`HexModArithNative]
+  globs := #[.one `HexModArithNative, .one `HexModArith.WordMod,
+    .one `HexModArith.Residue]
+  precompileModules := true
+  moreLinkObjs := #[hexmodarithO]
