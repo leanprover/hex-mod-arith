@@ -10,7 +10,7 @@
       "rev": "5ae42d0127e49eb3973ae01a5304a7adb2a9ee65",
       "name": "HexArith",
       "manifestFile": "lake-manifest.json",
-      "inputRev": "v0.8.0",
+      "inputRev": "v0.9.0",
       "inherited": false,
       "configFile": "lakefile.lean"
     }
